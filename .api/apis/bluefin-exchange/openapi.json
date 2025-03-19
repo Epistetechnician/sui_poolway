@@ -1,0 +1,1881 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Bluefin Spot API",
+    "description": "Schema for Bluefin spot trading APIs.\n",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "swap.api.sui-prod.bluefin.io"
+    }
+  ],
+  "paths": {
+    "/api/v1/info": {
+      "get": {
+        "tags": [
+          "MAIN"
+        ],
+        "operationId": "GetExchangeInfo",
+        "summary": "Get exchange TVL, total volume, total fee and other statistics",
+        "responses": {
+          "200": {
+            "description": "Successful response, containing exchange stats across all pools",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "tvl",
+                    "totalFee",
+                    "totalVolume"
+                  ],
+                  "properties": {
+                    "tvl": {
+                      "type": "string",
+                      "description": "Total amount of assets (in USD) currently held across all pools.",
+                      "example": "2036397.87"
+                    },
+                    "totalFee": {
+                      "type": "string",
+                      "description": "The total fee collected across all pools.",
+                      "example": "203.639787"
+                    },
+                    "totalVolume": {
+                      "type": "string",
+                      "description": "The total trading volume across all pools.",
+                      "example": "2036397.87"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pools/info": {
+      "get": {
+        "tags": [
+          "POOLS"
+        ],
+        "operationId": "GetPoolsInfo",
+        "summary": "Get Pools Information",
+        "parameters": [
+          {
+            "name": "pools",
+            "in": "query",
+            "description": "A comma separated list of pool addresses to filter results on",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "description": "Use this to retrieve pools containing the specified token",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response, containing an array of pool information based on the specified filters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "address",
+                      "symbol",
+                      "feeRate",
+                      "tvl",
+                      "price",
+                      "tokenA",
+                      "tokenB",
+                      "totalApr",
+                      "day",
+                      "week",
+                      "month"
+                    ],
+                    "properties": {
+                      "address": {
+                        "type": "string",
+                        "description": "Pool address on the SUI chain.",
+                        "example": "0xabe423ab8646d490804ae1a5ca5ad46d62e8067caf03941289d45ee2a511861a"
+                      },
+                      "symbol": {
+                        "type": "string",
+                        "description": "Pool symbol."
+                      },
+                      "feeRate": {
+                        "type": "string",
+                        "description": "The transaction fee rate charged by the pool, expressed as a decimal. For example, 0.0001 represents 0.01%.",
+                        "example": "0.0001"
+                      },
+                      "tvl": {
+                        "type": "string",
+                        "description": "Total amount of assets (in USD) currently held within a pool."
+                      },
+                      "price": {
+                        "type": "string",
+                        "description": "The price of tokenA in terms of tokenB."
+                      },
+                      "config": {
+                        "type": "object",
+                        "required": [
+                          "tickSpacing"
+                        ],
+                        "properties": {
+                          "tickSpacing": {
+                            "type": "integer",
+                            "description": "The minimum price interval at which liquidity can be added to the pool, influencing the granularity of the price range for concentrated liquidity."
+                          }
+                        }
+                      },
+                      "tokenA": {
+                        "required": [
+                          "amount",
+                          "info"
+                        ],
+                        "type": "object",
+                        "properties": {
+                          "amount": {
+                            "type": "string",
+                            "description": "Amount of tokenB in the pool.",
+                            "example": "448907.462937"
+                          },
+                          "info": {
+                            "type": "object",
+                            "required": [
+                              "address",
+                              "name",
+                              "symbol",
+                              "decimals",
+                              "logoURI"
+                            ],
+                            "properties": {
+                              "address": {
+                                "type": "string",
+                                "description": "Token identifier on the SUI chain."
+                              },
+                              "name": {
+                                "type": "string",
+                                "description": "Token name."
+                              },
+                              "symbol": {
+                                "type": "string",
+                                "description": "Token symbol."
+                              },
+                              "decimals": {
+                                "type": "integer",
+                                "description": "Number of decimals."
+                              },
+                              "logoURI": {
+                                "type": "string",
+                                "description": "Logo URI."
+                              },
+                              "extensions": {
+                                "type": "object",
+                                "properties": {
+                                  "coingeckoId": {
+                                    "type": "string",
+                                    "description": "Coingecko ID."
+                                  },
+                                  "pythId": {
+                                    "type": "string",
+                                    "description": "Pyth ID."
+                                  },
+                                  "birdeyeId": {
+                                    "type": "string",
+                                    "description": "Birdeye ID."
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "tokenB": {
+                        "required": [
+                          "amount",
+                          "info"
+                        ],
+                        "type": "object",
+                        "properties": {
+                          "amount": {
+                            "type": "string",
+                            "description": "Amount of tokenB in the pool.",
+                            "example": "448907.462937"
+                          },
+                          "info": {
+                            "type": "object",
+                            "required": [
+                              "address",
+                              "name",
+                              "symbol",
+                              "decimals",
+                              "logoURI"
+                            ],
+                            "properties": {
+                              "address": {
+                                "type": "string",
+                                "description": "Token identifier on the SUI chain."
+                              },
+                              "name": {
+                                "type": "string",
+                                "description": "Token name."
+                              },
+                              "symbol": {
+                                "type": "string",
+                                "description": "Token symbol."
+                              },
+                              "decimals": {
+                                "type": "integer",
+                                "description": "Number of decimals."
+                              },
+                              "logoURI": {
+                                "type": "string",
+                                "description": "Logo URI."
+                              },
+                              "extensions": {
+                                "type": "object",
+                                "properties": {
+                                  "coingeckoId": {
+                                    "type": "string",
+                                    "description": "Coingecko ID."
+                                  },
+                                  "pythId": {
+                                    "type": "string",
+                                    "description": "Pyth ID."
+                                  },
+                                  "birdeyeId": {
+                                    "type": "string",
+                                    "description": "Birdeye ID."
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "day": {
+                        "type": "object",
+                        "required": [
+                          "volume",
+                          "fee",
+                          "apr",
+                          "priceMin",
+                          "priceMax"
+                        ],
+                        "properties": {
+                          "volume": {
+                            "type": "string",
+                            "description": "The total trading volume for the period.",
+                            "example": "31007210.8437159"
+                          },
+                          "fee": {
+                            "type": "string",
+                            "description": "The total fee collected for the period.",
+                            "example": "6201.442168743182"
+                          },
+                          "apr": {
+                            "type": "object",
+                            "required": [
+                              "total",
+                              "feeApr",
+                              "rewardApr"
+                            ],
+                            "properties": {
+                              "total": {
+                                "type": "string",
+                                "description": "The total Annual Percentage Rate (APR) for the period.",
+                                "example": "34.17193145496003"
+                              },
+                              "feeApr": {
+                                "type": "string",
+                                "description": "The fee APR for the period.",
+                                "example": "87.09"
+                              },
+                              "rewardApr": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                },
+                                "description": "An array of reward APR values for the period.",
+                                "example": [
+                                  "1.8078555132856036"
+                                ]
+                              }
+                            }
+                          },
+                          "priceMin": {
+                            "type": "string",
+                            "description": "The lowest recorded price of tokenA in terms of tokenB during the given period.",
+                            "example": "128.7128712871287"
+                          },
+                          "priceMax": {
+                            "type": "string",
+                            "description": "The highest recorded price of tokenA in terms of tokenB during the given period.",
+                            "example": "129.1234567890123"
+                          }
+                        }
+                      },
+                      "week": {
+                        "type": "object",
+                        "required": [
+                          "volume",
+                          "fee",
+                          "apr",
+                          "priceMin",
+                          "priceMax"
+                        ],
+                        "properties": {
+                          "volume": {
+                            "type": "string",
+                            "description": "The total trading volume for the period.",
+                            "example": "31007210.8437159"
+                          },
+                          "fee": {
+                            "type": "string",
+                            "description": "The total fee collected for the period.",
+                            "example": "6201.442168743182"
+                          },
+                          "apr": {
+                            "type": "object",
+                            "required": [
+                              "total",
+                              "feeApr",
+                              "rewardApr"
+                            ],
+                            "properties": {
+                              "total": {
+                                "type": "string",
+                                "description": "The total Annual Percentage Rate (APR) for the period.",
+                                "example": "34.17193145496003"
+                              },
+                              "feeApr": {
+                                "type": "string",
+                                "description": "The fee APR for the period.",
+                                "example": "87.09"
+                              },
+                              "rewardApr": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                },
+                                "description": "An array of reward APR values for the period.",
+                                "example": [
+                                  "1.8078555132856036"
+                                ]
+                              }
+                            }
+                          },
+                          "priceMin": {
+                            "type": "string",
+                            "description": "The lowest recorded price of tokenA in terms of tokenB during the given period.",
+                            "example": "128.7128712871287"
+                          },
+                          "priceMax": {
+                            "type": "string",
+                            "description": "The highest recorded price of tokenA in terms of tokenB during the given period.",
+                            "example": "129.1234567890123"
+                          }
+                        }
+                      },
+                      "month": {
+                        "type": "object",
+                        "required": [
+                          "volume",
+                          "fee",
+                          "apr",
+                          "priceMin",
+                          "priceMax"
+                        ],
+                        "properties": {
+                          "volume": {
+                            "type": "string",
+                            "description": "The total trading volume for the period.",
+                            "example": "31007210.8437159"
+                          },
+                          "fee": {
+                            "type": "string",
+                            "description": "The total fee collected for the period.",
+                            "example": "6201.442168743182"
+                          },
+                          "apr": {
+                            "type": "object",
+                            "required": [
+                              "total",
+                              "feeApr",
+                              "rewardApr"
+                            ],
+                            "properties": {
+                              "total": {
+                                "type": "string",
+                                "description": "The total Annual Percentage Rate (APR) for the period.",
+                                "example": "34.17193145496003"
+                              },
+                              "feeApr": {
+                                "type": "string",
+                                "description": "The fee APR for the period.",
+                                "example": "87.09"
+                              },
+                              "rewardApr": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                },
+                                "description": "An array of reward APR values for the period.",
+                                "example": [
+                                  "1.8078555132856036"
+                                ]
+                              }
+                            }
+                          },
+                          "priceMin": {
+                            "type": "string",
+                            "description": "The lowest recorded price of tokenA in terms of tokenB during the given period.",
+                            "example": "128.7128712871287"
+                          },
+                          "priceMax": {
+                            "type": "string",
+                            "description": "The highest recorded price of tokenA in terms of tokenB during the given period.",
+                            "example": "129.1234567890123"
+                          }
+                        }
+                      },
+                      "totalApr": {
+                        "type": "string",
+                        "description": "The total Annual Percentage Rate (APR), which combines fee APR and reward APR over the specified period.",
+                        "example": "34.17"
+                      },
+                      "rewards": {
+                        "type": "array",
+                        "description": "Details of the rewards program for liquidity providers, including the reward tokens and the rate of distribution (reward per second).",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Token": {
+                              "type": "object",
+                              "required": [
+                                "address",
+                                "name",
+                                "symbol",
+                                "decimals",
+                                "logoURI"
+                              ],
+                              "properties": {
+                                "address": {
+                                  "type": "string",
+                                  "description": "Token identifier on the SUI chain."
+                                },
+                                "name": {
+                                  "type": "string",
+                                  "description": "Token name."
+                                },
+                                "symbol": {
+                                  "type": "string",
+                                  "description": "Token symbol."
+                                },
+                                "decimals": {
+                                  "type": "integer",
+                                  "description": "Number of decimals."
+                                },
+                                "logoURI": {
+                                  "type": "string",
+                                  "description": "Logo URI."
+                                },
+                                "extensions": {
+                                  "type": "object",
+                                  "properties": {
+                                    "coingeckoId": {
+                                      "type": "string",
+                                      "description": "Coingecko ID."
+                                    },
+                                    "pythId": {
+                                      "type": "string",
+                                      "description": "Pyth ID."
+                                    },
+                                    "birdeyeId": {
+                                      "type": "string",
+                                      "description": "Birdeye ID."
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "perSecond": {
+                              "type": "string",
+                              "description": "Reward per second.",
+                              "example": "0.0001"
+                            },
+                            "endTime": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "End time for the rewards program."
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pool/transactions": {
+      "get": {
+        "tags": [
+          "POOLS"
+        ],
+        "summary": "Get Pool Transactions",
+        "operationId": "GetPoolTransactions",
+        "parameters": [
+          {
+            "name": "pool",
+            "in": "query",
+            "description": "The pool address for which to retrieve transactions.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "The type of transaction for which to retrieve transactions.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Swap",
+                "AddLiquidity",
+                "RemoveLiquidity"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with transaction data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "pool",
+                      "sender",
+                      "blockTime",
+                      "tx",
+                      "tokens"
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "Swap",
+                          "AddLiquidity",
+                          "RemoveLiquidity"
+                        ]
+                      },
+                      "pool": {
+                        "type": "string",
+                        "description": "The pool address.",
+                        "example": "0xabe423ab8646d490804ae1a5ca5ad46d62e8067caf03941289d45ee2a511861a"
+                      },
+                      "sender": {
+                        "type": "string",
+                        "description": "The sender address.",
+                        "example": "0x9643f8fc5c47148e2d09081187d0e5af18ae55ef399090d20b28c81f19160ea5"
+                      },
+                      "blockTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "The block time in UTC timezone.",
+                        "example": "2024-07-15T16:15:11.931Z"
+                      },
+                      "tx": {
+                        "type": "string",
+                        "description": "Chain transaction ID.",
+                        "example": "A4M62jP9ZNGLsjJhhwnCLkMyhcfJSmhuCbGGmAtzdCJR"
+                      },
+                      "volume": {
+                        "type": "string",
+                        "description": "The volume of the transaction. Only applicable in swap",
+                        "example": "2036397.87"
+                      },
+                      "tokens": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "address",
+                            "symbol",
+                            "amount"
+                          ],
+                          "properties": {
+                            "address": {
+                              "type": "string",
+                              "description": "The token address.",
+                              "example": "0x6ba4a060002a141966a0774eecbc604e1c7a4cbd8882442e2250c960ef9f89b2::yoda::YODA"
+                            },
+                            "symbol": {
+                              "type": "string",
+                              "description": "The token symbol.",
+                              "example": "YODA"
+                            },
+                            "amount": {
+                              "type": "string",
+                              "description": "The token amount.",
+                              "example": "126.82029069"
+                            },
+                            "imageURI": {
+                              "type": "string",
+                              "description": "The token URL.",
+                              "example": "https://assets.coingecko.com/coins/images/1/large/bitcoin.png"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pool/stats/line": {
+      "get": {
+        "tags": [
+          "POOLS"
+        ],
+        "summary": "Get Pool Line Data Ordered by Time Descending",
+        "operationId": "GetPoolLine",
+        "parameters": [
+          {
+            "name": "pool",
+            "in": "query",
+            "description": "The pool address for which to retrieve stats line data.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "interval",
+            "in": "query",
+            "description": "The interval for which to retrieve stats line data.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1d",
+                "1w",
+                "1m"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with stats line data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "volume",
+                      "tvl",
+                      "startDate",
+                      "endDate",
+                      "totalApr"
+                    ],
+                    "properties": {
+                      "volume": {
+                        "type": "string",
+                        "description": "The volume for the line data."
+                      },
+                      "tvl": {
+                        "type": "string",
+                        "description": "The tvl for the line data."
+                      },
+                      "totalApr": {
+                        "type": "string",
+                        "description": "The apr for the line data."
+                      },
+                      "startDate": {
+                        "type": "number",
+                        "example": 1726012800,
+                        "description": "The timestamp corresponding to the starting point of stats line data"
+                      },
+                      "endDate": {
+                        "type": "number",
+                        "example": 1726012900,
+                        "description": "The timestamp corresponding to the ending point of stats line data"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pool/line/ticks": {
+      "get": {
+        "tags": [
+          "POOLS"
+        ],
+        "summary": "Get Pool Ticks",
+        "operationId": "GetPoolTicks",
+        "parameters": [
+          {
+            "name": "pool",
+            "in": "query",
+            "description": "The pool address for which to retrieve ticks.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with tick data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "tick",
+                      "liquidity",
+                      "price"
+                    ],
+                    "properties": {
+                      "tick": {
+                        "type": "integer",
+                        "description": "The tick index.",
+                        "example": 39120
+                      },
+                      "liquidity": {
+                        "type": "string",
+                        "description": "Liquidity net at tick.",
+                        "example": "21741392026"
+                      },
+                      "price": {
+                        "type": "string",
+                        "description": "Price at tick."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tokens/info": {
+      "get": {
+        "tags": [
+          "TOKENS"
+        ],
+        "operationId": "GetTokensInfo",
+        "summary": "Get Tokens Information",
+        "parameters": [
+          {
+            "name": "tokens",
+            "in": "query",
+            "description": "A comma separate listed to token addresses to filter results on",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response, containing an array of tokens information based on the specified filters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "address",
+                      "name",
+                      "symbol",
+                      "decimals",
+                      "logoURI"
+                    ],
+                    "properties": {
+                      "address": {
+                        "type": "string",
+                        "description": "Token identifier on the SUI chain."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Token name."
+                      },
+                      "symbol": {
+                        "type": "string",
+                        "description": "Token symbol."
+                      },
+                      "decimals": {
+                        "type": "integer",
+                        "description": "Number of decimals."
+                      },
+                      "logoURI": {
+                        "type": "string",
+                        "description": "Logo URI."
+                      },
+                      "extensions": {
+                        "type": "object",
+                        "properties": {
+                          "coingeckoId": {
+                            "type": "string",
+                            "description": "Coingecko ID."
+                          },
+                          "pythId": {
+                            "type": "string",
+                            "description": "Pyth ID."
+                          },
+                          "birdeyeId": {
+                            "type": "string",
+                            "description": "Birdeye ID."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tokens/price": {
+      "get": {
+        "tags": [
+          "TOKENS"
+        ],
+        "operationId": "GetTokensPrice",
+        "summary": "Get Tokens Oracle Price",
+        "parameters": [
+          {
+            "name": "tokens",
+            "in": "query",
+            "description": "A list of specific token addresses",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response, containing tokens with their oracle prices.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "address",
+                      "price"
+                    ],
+                    "properties": {
+                      "address": {
+                        "type": "string",
+                        "description": "Token identifier on the SUI chain."
+                      },
+                      "price": {
+                        "type": "string",
+                        "description": "Token price."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PoolTick": {
+        "type": "object",
+        "required": [
+          "tick",
+          "liquidity",
+          "price"
+        ],
+        "properties": {
+          "tick": {
+            "type": "integer",
+            "description": "The tick index.",
+            "example": 39120
+          },
+          "liquidity": {
+            "type": "string",
+            "description": "Liquidity net at tick.",
+            "example": "21741392026"
+          },
+          "price": {
+            "type": "string",
+            "description": "Price at tick."
+          }
+        }
+      },
+      "PoolTransactionType": {
+        "type": "string",
+        "enum": [
+          "Swap",
+          "AddLiquidity",
+          "RemoveLiquidity"
+        ]
+      },
+      "PoolTransaction": {
+        "type": "object",
+        "required": [
+          "type",
+          "pool",
+          "sender",
+          "blockTime",
+          "tx",
+          "tokens"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "Swap",
+              "AddLiquidity",
+              "RemoveLiquidity"
+            ]
+          },
+          "pool": {
+            "type": "string",
+            "description": "The pool address.",
+            "example": "0xabe423ab8646d490804ae1a5ca5ad46d62e8067caf03941289d45ee2a511861a"
+          },
+          "sender": {
+            "type": "string",
+            "description": "The sender address.",
+            "example": "0x9643f8fc5c47148e2d09081187d0e5af18ae55ef399090d20b28c81f19160ea5"
+          },
+          "blockTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The block time in UTC timezone.",
+            "example": "2024-07-15T16:15:11.931Z"
+          },
+          "tx": {
+            "type": "string",
+            "description": "Chain transaction ID.",
+            "example": "A4M62jP9ZNGLsjJhhwnCLkMyhcfJSmhuCbGGmAtzdCJR"
+          },
+          "volume": {
+            "type": "string",
+            "description": "The volume of the transaction. Only applicable in swap",
+            "example": "2036397.87"
+          },
+          "tokens": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "address",
+                "symbol",
+                "amount"
+              ],
+              "properties": {
+                "address": {
+                  "type": "string",
+                  "description": "The token address.",
+                  "example": "0x6ba4a060002a141966a0774eecbc604e1c7a4cbd8882442e2250c960ef9f89b2::yoda::YODA"
+                },
+                "symbol": {
+                  "type": "string",
+                  "description": "The token symbol.",
+                  "example": "YODA"
+                },
+                "amount": {
+                  "type": "string",
+                  "description": "The token amount.",
+                  "example": "126.82029069"
+                },
+                "imageURI": {
+                  "type": "string",
+                  "description": "The token URL.",
+                  "example": "https://assets.coingecko.com/coins/images/1/large/bitcoin.png"
+                }
+              }
+            }
+          }
+        }
+      },
+      "PoolTransactionToken": {
+        "type": "object",
+        "required": [
+          "address",
+          "symbol",
+          "amount"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "The token address.",
+            "example": "0x6ba4a060002a141966a0774eecbc604e1c7a4cbd8882442e2250c960ef9f89b2::yoda::YODA"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "The token symbol.",
+            "example": "YODA"
+          },
+          "amount": {
+            "type": "string",
+            "description": "The token amount.",
+            "example": "126.82029069"
+          },
+          "imageURI": {
+            "type": "string",
+            "description": "The token URL.",
+            "example": "https://assets.coingecko.com/coins/images/1/large/bitcoin.png"
+          }
+        }
+      },
+      "PoolStatsLine": {
+        "type": "object",
+        "required": [
+          "volume",
+          "tvl",
+          "startDate",
+          "endDate",
+          "totalApr"
+        ],
+        "properties": {
+          "volume": {
+            "type": "string",
+            "description": "The volume for the line data."
+          },
+          "tvl": {
+            "type": "string",
+            "description": "The tvl for the line data."
+          },
+          "totalApr": {
+            "type": "string",
+            "description": "The apr for the line data."
+          },
+          "startDate": {
+            "type": "number",
+            "example": 1726012800,
+            "description": "The timestamp corresponding to the starting point of stats line data"
+          },
+          "endDate": {
+            "type": "number",
+            "example": 1726012900,
+            "description": "The timestamp corresponding to the ending point of stats line data"
+          }
+        }
+      },
+      "ExchangeInfo": {
+        "type": "object",
+        "required": [
+          "tvl",
+          "totalFee",
+          "totalVolume"
+        ],
+        "properties": {
+          "tvl": {
+            "type": "string",
+            "description": "Total amount of assets (in USD) currently held across all pools.",
+            "example": "2036397.87"
+          },
+          "totalFee": {
+            "type": "string",
+            "description": "The total fee collected across all pools.",
+            "example": "203.639787"
+          },
+          "totalVolume": {
+            "type": "string",
+            "description": "The total trading volume across all pools.",
+            "example": "2036397.87"
+          }
+        }
+      },
+      "LiquidityPool": {
+        "type": "object",
+        "required": [
+          "address",
+          "symbol",
+          "feeRate",
+          "tvl",
+          "price",
+          "tokenA",
+          "tokenB",
+          "totalApr",
+          "day",
+          "week",
+          "month"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Pool address on the SUI chain.",
+            "example": "0xabe423ab8646d490804ae1a5ca5ad46d62e8067caf03941289d45ee2a511861a"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Pool symbol."
+          },
+          "feeRate": {
+            "type": "string",
+            "description": "The transaction fee rate charged by the pool, expressed as a decimal. For example, 0.0001 represents 0.01%.",
+            "example": "0.0001"
+          },
+          "tvl": {
+            "type": "string",
+            "description": "Total amount of assets (in USD) currently held within a pool."
+          },
+          "price": {
+            "type": "string",
+            "description": "The price of tokenA in terms of tokenB."
+          },
+          "config": {
+            "type": "object",
+            "required": [
+              "tickSpacing"
+            ],
+            "properties": {
+              "tickSpacing": {
+                "type": "integer",
+                "description": "The minimum price interval at which liquidity can be added to the pool, influencing the granularity of the price range for concentrated liquidity."
+              }
+            }
+          },
+          "tokenA": {
+            "required": [
+              "amount",
+              "info"
+            ],
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "string",
+                "description": "Amount of tokenB in the pool.",
+                "example": "448907.462937"
+              },
+              "info": {
+                "type": "object",
+                "required": [
+                  "address",
+                  "name",
+                  "symbol",
+                  "decimals",
+                  "logoURI"
+                ],
+                "properties": {
+                  "address": {
+                    "type": "string",
+                    "description": "Token identifier on the SUI chain."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Token name."
+                  },
+                  "symbol": {
+                    "type": "string",
+                    "description": "Token symbol."
+                  },
+                  "decimals": {
+                    "type": "integer",
+                    "description": "Number of decimals."
+                  },
+                  "logoURI": {
+                    "type": "string",
+                    "description": "Logo URI."
+                  },
+                  "extensions": {
+                    "type": "object",
+                    "properties": {
+                      "coingeckoId": {
+                        "type": "string",
+                        "description": "Coingecko ID."
+                      },
+                      "pythId": {
+                        "type": "string",
+                        "description": "Pyth ID."
+                      },
+                      "birdeyeId": {
+                        "type": "string",
+                        "description": "Birdeye ID."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tokenB": {
+            "required": [
+              "amount",
+              "info"
+            ],
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "string",
+                "description": "Amount of tokenB in the pool.",
+                "example": "448907.462937"
+              },
+              "info": {
+                "type": "object",
+                "required": [
+                  "address",
+                  "name",
+                  "symbol",
+                  "decimals",
+                  "logoURI"
+                ],
+                "properties": {
+                  "address": {
+                    "type": "string",
+                    "description": "Token identifier on the SUI chain."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Token name."
+                  },
+                  "symbol": {
+                    "type": "string",
+                    "description": "Token symbol."
+                  },
+                  "decimals": {
+                    "type": "integer",
+                    "description": "Number of decimals."
+                  },
+                  "logoURI": {
+                    "type": "string",
+                    "description": "Logo URI."
+                  },
+                  "extensions": {
+                    "type": "object",
+                    "properties": {
+                      "coingeckoId": {
+                        "type": "string",
+                        "description": "Coingecko ID."
+                      },
+                      "pythId": {
+                        "type": "string",
+                        "description": "Pyth ID."
+                      },
+                      "birdeyeId": {
+                        "type": "string",
+                        "description": "Birdeye ID."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "day": {
+            "type": "object",
+            "required": [
+              "volume",
+              "fee",
+              "apr",
+              "priceMin",
+              "priceMax"
+            ],
+            "properties": {
+              "volume": {
+                "type": "string",
+                "description": "The total trading volume for the period.",
+                "example": "31007210.8437159"
+              },
+              "fee": {
+                "type": "string",
+                "description": "The total fee collected for the period.",
+                "example": "6201.442168743182"
+              },
+              "apr": {
+                "type": "object",
+                "required": [
+                  "total",
+                  "feeApr",
+                  "rewardApr"
+                ],
+                "properties": {
+                  "total": {
+                    "type": "string",
+                    "description": "The total Annual Percentage Rate (APR) for the period.",
+                    "example": "34.17193145496003"
+                  },
+                  "feeApr": {
+                    "type": "string",
+                    "description": "The fee APR for the period.",
+                    "example": "87.09"
+                  },
+                  "rewardApr": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "An array of reward APR values for the period.",
+                    "example": [
+                      "1.8078555132856036"
+                    ]
+                  }
+                }
+              },
+              "priceMin": {
+                "type": "string",
+                "description": "The lowest recorded price of tokenA in terms of tokenB during the given period.",
+                "example": "128.7128712871287"
+              },
+              "priceMax": {
+                "type": "string",
+                "description": "The highest recorded price of tokenA in terms of tokenB during the given period.",
+                "example": "129.1234567890123"
+              }
+            }
+          },
+          "week": {
+            "type": "object",
+            "required": [
+              "volume",
+              "fee",
+              "apr",
+              "priceMin",
+              "priceMax"
+            ],
+            "properties": {
+              "volume": {
+                "type": "string",
+                "description": "The total trading volume for the period.",
+                "example": "31007210.8437159"
+              },
+              "fee": {
+                "type": "string",
+                "description": "The total fee collected for the period.",
+                "example": "6201.442168743182"
+              },
+              "apr": {
+                "type": "object",
+                "required": [
+                  "total",
+                  "feeApr",
+                  "rewardApr"
+                ],
+                "properties": {
+                  "total": {
+                    "type": "string",
+                    "description": "The total Annual Percentage Rate (APR) for the period.",
+                    "example": "34.17193145496003"
+                  },
+                  "feeApr": {
+                    "type": "string",
+                    "description": "The fee APR for the period.",
+                    "example": "87.09"
+                  },
+                  "rewardApr": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "An array of reward APR values for the period.",
+                    "example": [
+                      "1.8078555132856036"
+                    ]
+                  }
+                }
+              },
+              "priceMin": {
+                "type": "string",
+                "description": "The lowest recorded price of tokenA in terms of tokenB during the given period.",
+                "example": "128.7128712871287"
+              },
+              "priceMax": {
+                "type": "string",
+                "description": "The highest recorded price of tokenA in terms of tokenB during the given period.",
+                "example": "129.1234567890123"
+              }
+            }
+          },
+          "month": {
+            "type": "object",
+            "required": [
+              "volume",
+              "fee",
+              "apr",
+              "priceMin",
+              "priceMax"
+            ],
+            "properties": {
+              "volume": {
+                "type": "string",
+                "description": "The total trading volume for the period.",
+                "example": "31007210.8437159"
+              },
+              "fee": {
+                "type": "string",
+                "description": "The total fee collected for the period.",
+                "example": "6201.442168743182"
+              },
+              "apr": {
+                "type": "object",
+                "required": [
+                  "total",
+                  "feeApr",
+                  "rewardApr"
+                ],
+                "properties": {
+                  "total": {
+                    "type": "string",
+                    "description": "The total Annual Percentage Rate (APR) for the period.",
+                    "example": "34.17193145496003"
+                  },
+                  "feeApr": {
+                    "type": "string",
+                    "description": "The fee APR for the period.",
+                    "example": "87.09"
+                  },
+                  "rewardApr": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "An array of reward APR values for the period.",
+                    "example": [
+                      "1.8078555132856036"
+                    ]
+                  }
+                }
+              },
+              "priceMin": {
+                "type": "string",
+                "description": "The lowest recorded price of tokenA in terms of tokenB during the given period.",
+                "example": "128.7128712871287"
+              },
+              "priceMax": {
+                "type": "string",
+                "description": "The highest recorded price of tokenA in terms of tokenB during the given period.",
+                "example": "129.1234567890123"
+              }
+            }
+          },
+          "totalApr": {
+            "type": "string",
+            "description": "The total Annual Percentage Rate (APR), which combines fee APR and reward APR over the specified period.",
+            "example": "34.17"
+          },
+          "rewards": {
+            "type": "array",
+            "description": "Details of the rewards program for liquidity providers, including the reward tokens and the rate of distribution (reward per second).",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Token": {
+                  "type": "object",
+                  "required": [
+                    "address",
+                    "name",
+                    "symbol",
+                    "decimals",
+                    "logoURI"
+                  ],
+                  "properties": {
+                    "address": {
+                      "type": "string",
+                      "description": "Token identifier on the SUI chain."
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Token name."
+                    },
+                    "symbol": {
+                      "type": "string",
+                      "description": "Token symbol."
+                    },
+                    "decimals": {
+                      "type": "integer",
+                      "description": "Number of decimals."
+                    },
+                    "logoURI": {
+                      "type": "string",
+                      "description": "Logo URI."
+                    },
+                    "extensions": {
+                      "type": "object",
+                      "properties": {
+                        "coingeckoId": {
+                          "type": "string",
+                          "description": "Coingecko ID."
+                        },
+                        "pythId": {
+                          "type": "string",
+                          "description": "Pyth ID."
+                        },
+                        "birdeyeId": {
+                          "type": "string",
+                          "description": "Birdeye ID."
+                        }
+                      }
+                    }
+                  }
+                },
+                "perSecond": {
+                  "type": "string",
+                  "description": "Reward per second.",
+                  "example": "0.0001"
+                },
+                "endTime": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "End time for the rewards program."
+                }
+              }
+            }
+          }
+        }
+      },
+      "PoolToken": {
+        "required": [
+          "amount",
+          "info"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "description": "Amount of tokenB in the pool.",
+            "example": "448907.462937"
+          },
+          "info": {
+            "type": "object",
+            "required": [
+              "address",
+              "name",
+              "symbol",
+              "decimals",
+              "logoURI"
+            ],
+            "properties": {
+              "address": {
+                "type": "string",
+                "description": "Token identifier on the SUI chain."
+              },
+              "name": {
+                "type": "string",
+                "description": "Token name."
+              },
+              "symbol": {
+                "type": "string",
+                "description": "Token symbol."
+              },
+              "decimals": {
+                "type": "integer",
+                "description": "Number of decimals."
+              },
+              "logoURI": {
+                "type": "string",
+                "description": "Logo URI."
+              },
+              "extensions": {
+                "type": "object",
+                "properties": {
+                  "coingeckoId": {
+                    "type": "string",
+                    "description": "Coingecko ID."
+                  },
+                  "pythId": {
+                    "type": "string",
+                    "description": "Pyth ID."
+                  },
+                  "birdeyeId": {
+                    "type": "string",
+                    "description": "Birdeye ID."
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "PoolConfig": {
+        "type": "object",
+        "required": [
+          "tickSpacing"
+        ],
+        "properties": {
+          "tickSpacing": {
+            "type": "integer",
+            "description": "The minimum price interval at which liquidity can be added to the pool, influencing the granularity of the price range for concentrated liquidity."
+          }
+        }
+      },
+      "PoolReward": {
+        "type": "object",
+        "properties": {
+          "Token": {
+            "type": "object",
+            "required": [
+              "address",
+              "name",
+              "symbol",
+              "decimals",
+              "logoURI"
+            ],
+            "properties": {
+              "address": {
+                "type": "string",
+                "description": "Token identifier on the SUI chain."
+              },
+              "name": {
+                "type": "string",
+                "description": "Token name."
+              },
+              "symbol": {
+                "type": "string",
+                "description": "Token symbol."
+              },
+              "decimals": {
+                "type": "integer",
+                "description": "Number of decimals."
+              },
+              "logoURI": {
+                "type": "string",
+                "description": "Logo URI."
+              },
+              "extensions": {
+                "type": "object",
+                "properties": {
+                  "coingeckoId": {
+                    "type": "string",
+                    "description": "Coingecko ID."
+                  },
+                  "pythId": {
+                    "type": "string",
+                    "description": "Pyth ID."
+                  },
+                  "birdeyeId": {
+                    "type": "string",
+                    "description": "Birdeye ID."
+                  }
+                }
+              }
+            }
+          },
+          "perSecond": {
+            "type": "string",
+            "description": "Reward per second.",
+            "example": "0.0001"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "End time for the rewards program."
+          }
+        }
+      },
+      "Token": {
+        "type": "object",
+        "required": [
+          "address",
+          "name",
+          "symbol",
+          "decimals",
+          "logoURI"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Token identifier on the SUI chain."
+          },
+          "name": {
+            "type": "string",
+            "description": "Token name."
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Token symbol."
+          },
+          "decimals": {
+            "type": "integer",
+            "description": "Number of decimals."
+          },
+          "logoURI": {
+            "type": "string",
+            "description": "Logo URI."
+          },
+          "extensions": {
+            "type": "object",
+            "properties": {
+              "coingeckoId": {
+                "type": "string",
+                "description": "Coingecko ID."
+              },
+              "pythId": {
+                "type": "string",
+                "description": "Pyth ID."
+              },
+              "birdeyeId": {
+                "type": "string",
+                "description": "Birdeye ID."
+              }
+            }
+          }
+        }
+      },
+      "TokenPrice": {
+        "type": "object",
+        "required": [
+          "address",
+          "price"
+        ],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Token identifier on the SUI chain."
+          },
+          "price": {
+            "type": "string",
+            "description": "Token price."
+          }
+        }
+      },
+      "TokenExtensions": {
+        "type": "object",
+        "properties": {
+          "coingeckoId": {
+            "type": "string",
+            "description": "Coingecko ID."
+          },
+          "pythId": {
+            "type": "string",
+            "description": "Pyth ID."
+          },
+          "birdeyeId": {
+            "type": "string",
+            "description": "Birdeye ID."
+          }
+        }
+      },
+      "Apr": {
+        "type": "object",
+        "required": [
+          "total",
+          "feeApr",
+          "rewardApr"
+        ],
+        "properties": {
+          "total": {
+            "type": "string",
+            "description": "The total Annual Percentage Rate (APR) for the period.",
+            "example": "34.17193145496003"
+          },
+          "feeApr": {
+            "type": "string",
+            "description": "The fee APR for the period.",
+            "example": "87.09"
+          },
+          "rewardApr": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array of reward APR values for the period.",
+            "example": [
+              "1.8078555132856036"
+            ]
+          }
+        }
+      },
+      "Period": {
+        "type": "object",
+        "required": [
+          "volume",
+          "fee",
+          "apr",
+          "priceMin",
+          "priceMax"
+        ],
+        "properties": {
+          "volume": {
+            "type": "string",
+            "description": "The total trading volume for the period.",
+            "example": "31007210.8437159"
+          },
+          "fee": {
+            "type": "string",
+            "description": "The total fee collected for the period.",
+            "example": "6201.442168743182"
+          },
+          "apr": {
+            "type": "object",
+            "required": [
+              "total",
+              "feeApr",
+              "rewardApr"
+            ],
+            "properties": {
+              "total": {
+                "type": "string",
+                "description": "The total Annual Percentage Rate (APR) for the period.",
+                "example": "34.17193145496003"
+              },
+              "feeApr": {
+                "type": "string",
+                "description": "The fee APR for the period.",
+                "example": "87.09"
+              },
+              "rewardApr": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "An array of reward APR values for the period.",
+                "example": [
+                  "1.8078555132856036"
+                ]
+              }
+            }
+          },
+          "priceMin": {
+            "type": "string",
+            "description": "The lowest recorded price of tokenA in terms of tokenB during the given period.",
+            "example": "128.7128712871287"
+          },
+          "priceMax": {
+            "type": "string",
+            "description": "The highest recorded price of tokenA in terms of tokenB during the given period.",
+            "example": "129.1234567890123"
+          }
+        }
+      }
+    }
+  }
+}

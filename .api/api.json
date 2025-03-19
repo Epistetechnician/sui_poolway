@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "apis": [
+    {
+      "identifier": "bluefin-exchange",
+      "source": "@bluefin-exchange/v2.0.1#21ykf1ym390b35l",
+      "integrity": "sha512-j8L6vTVOylWyJtp1vMPHZvlUtEFHX/O2zh0tX3ezBrJk4d5HwRWJLTcpaAet4S0addCX3TqYS8zPd7vFlNk6gQ==",
+      "installerVersion": "6.1.3"
+    }
+  ]
+}
