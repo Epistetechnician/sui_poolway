@@ -9,9 +9,7 @@
     "dev": "ts-node-dev --respawn --transpile-only sui_arbitrage_analyzer_v2.tsx",
     "lint": "eslint . --ext .ts,.tsx",
     "test": "jest",
-    "prepare": "npm run build",
-    "docker:build": "docker build -t sui-arbitrage-analyzer-v2 .",
-    "docker:run": "docker run -d --env-file .env sui-arbitrage-analyzer-v2"
+    "prepare": "npm run build"
   },
   "dependencies": {
     "@cetusprotocol/cetus-sui-clmm-sdk": "^2.6.0",
